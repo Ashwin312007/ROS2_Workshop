@@ -15,6 +15,8 @@ Designed for **ROS 2 Jazzy Jalisco** running on **Ubuntu 24.04 LTS** inside **WS
     └── four_wheeled_robot_description/
         ├── CMakeLists.txt
         ├── package.xml
+        ├── scripts/
+        │   └── diff_drive_sim.py          # Differential drive kinematics & auto-stop simulator
         ├── launch/
         │   └── view_robot.launch.py       # Launch file for state publishers & RViz2
         ├── rviz/
@@ -93,16 +95,24 @@ colcon build --symlink-install --packages-select four_wheeled_robot_description
 source install/setup.bash
 ```
 
-### 3. Launch Visualization & Joint Articulation
-Start the full stack (robot state publisher, joint state publisher GUI, and RViz2):
+### 3. Launch Visualization & Teleoperation
+Start the full stack (robot state publisher, differential drive simulator, and RViz2):
 
 ```bash
 ros2 launch four_wheeled_robot_description view_robot.launch.py
 ```
 
-To run in headless or automated test mode without the GUI slider:
+In a separate terminal, launch the keyboard teleoperation node:
+
 ```bash
-ros2 launch four_wheeled_robot_description view_robot.launch.py gui:=false
+ros2 run teleop_twist_keyboard teleop_twist_keyboard
+```
+
+- **Hold to drive**: Hold keys (`i` forward, `,` backward, `j`/`l` turn).
+- **Auto-stop watchdog**: If no key is pressed for >0.5s, the robot automatically stops.
+- To use the manual joint slider GUI instead of teleoperation:
+```bash
+ros2 launch four_wheeled_robot_description view_robot.launch.py teleop:=false gui:=true
 ```
 
 ---

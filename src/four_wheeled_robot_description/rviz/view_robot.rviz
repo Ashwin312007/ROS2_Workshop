@@ -10,7 +10,7 @@ Visualization Manager:
       Name: Grid
       Enabled: true
       Plane: XY
-      Reference Frame: base_footprint
+      Reference Frame: odom
       Cell Size: 1.0
       Total Cell Count: 20
     - Class: rviz_default_plugins/RobotModel
@@ -32,7 +32,7 @@ Visualization Manager:
       Update Interval: 0.0
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: base_footprint
+    Fixed Frame: odom
   Tools:
     - Class: rviz_default_plugins/Interact
     - Class: rviz_default_plugins/MoveCamera
