@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>four_wheeled_robot_description</name>
+  <name>four_wheeled_robot_xacro</name>
   <version>0.0.1</version>
-  <description>Modular 4-wheeled robot description for ROS 2 Jazzy</description>
+  <description>Modular Xacro description of a 4-wheeled robot for ROS 2</description>
   <maintainer email="user@todo.todo">User</maintainer>
   <license>Apache-2.0</license>
 

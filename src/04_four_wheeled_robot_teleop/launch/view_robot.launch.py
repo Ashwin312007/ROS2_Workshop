@@ -5,14 +5,15 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.conditions import IfCondition
-from launch.substitutions import LaunchConfiguration, Command, PythonExpression
+from launch.substitutions import Command, LaunchConfiguration, PythonExpression
 from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
 
+
 def generate_launch_description():
-    pkg_name = 'four_wheeled_robot_description'
+    pkg_name = 'four_wheeled_robot_teleop'
     pkg_share = get_package_share_directory(pkg_name)
-    
+
     default_rviz_config_path = os.path.join(pkg_share, 'rviz', 'view_robot.rviz')
     xacro_file = os.path.join(pkg_share, 'urdf', 'robot.urdf.xacro')
 
@@ -23,14 +24,14 @@ def generate_launch_description():
     )
 
     declare_gui = DeclareLaunchArgument(
-        'gui', 
-        default_value='false', 
+        'gui',
+        default_value='false',
         description='Flag to enable joint_state_publisher_gui (when teleop is false)'
     )
-    
+
     declare_rviz = DeclareLaunchArgument(
-        'rvizconfig', 
-        default_value=default_rviz_config_path, 
+        'rvizconfig',
+        default_value=default_rviz_config_path,
         description='Absolute path to rviz config file'
     )
 
@@ -45,7 +46,7 @@ def generate_launch_description():
     )
 
     diff_drive_sim_node = Node(
-        package='four_wheeled_robot_description',
+        package='four_wheeled_robot_teleop',
         executable='diff_drive_sim.py',
         name='diff_drive_sim',
         output='screen',
@@ -56,14 +57,18 @@ def generate_launch_description():
         package='joint_state_publisher_gui',
         executable='joint_state_publisher_gui',
         name='joint_state_publisher_gui',
-        condition=IfCondition(PythonExpression(["'", LaunchConfiguration('gui'), "' == 'true' and '", LaunchConfiguration('teleop'), "' != 'true'"]))
+        condition=IfCondition(
+            PythonExpression(["'", LaunchConfiguration('gui'), "' == 'true' and '", LaunchConfiguration('teleop'), "' != 'true'"])
+        )
     )
 
     joint_state_publisher_node = Node(
         package='joint_state_publisher',
         executable='joint_state_publisher',
         name='joint_state_publisher',
-        condition=IfCondition(PythonExpression(["'", LaunchConfiguration('gui'), "' == 'false' and '", LaunchConfiguration('teleop'), "' != 'true'"]))
+        condition=IfCondition(
+            PythonExpression(["'", LaunchConfiguration('gui'), "' == 'false' and '", LaunchConfiguration('teleop'), "' != 'true'"])
+        )
     )
 
     rviz_node = Node(

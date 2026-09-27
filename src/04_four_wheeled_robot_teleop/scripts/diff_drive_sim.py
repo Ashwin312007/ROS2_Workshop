@@ -7,7 +7,15 @@ from nav_msgs.msg import Odometry
 from sensor_msgs.msg import JointState
 from tf2_ros import TransformBroadcaster
 
+
 class DiffDriveSim(Node):
+    """Differential drive simulation node for four-wheeled robot.
+
+    Subscribes to /cmd_vel, updates 2D odometry using differential drive
+    kinematics, broadcasts TF (odom -> base_footprint), and publishes Odometry
+    and JointState messages for visualization in RViz2.
+    """
+
     def __init__(self):
         super().__init__('diff_drive_sim')
 
@@ -78,7 +86,7 @@ class DiffDriveSim(Node):
         self.left_wheel_pos += omega_l * dt
         self.right_wheel_pos += omega_r * dt
 
-        # Update pose
+        # Update pose (Runge-Kutta 2nd order approximation)
         delta_yaw = self.angular_z * dt
         delta_x = self.linear_x * math.cos(self.yaw + delta_yaw / 2.0) * dt
         delta_y = self.linear_x * math.sin(self.yaw + delta_yaw / 2.0) * dt
@@ -87,7 +95,7 @@ class DiffDriveSim(Node):
         self.y += delta_y
         self.yaw += delta_yaw
 
-        # Quaternion for yaw
+        # Quaternion representation for planar yaw
         qz = math.sin(self.yaw / 2.0)
         qw = math.cos(self.yaw / 2.0)
 
@@ -139,6 +147,7 @@ class DiffDriveSim(Node):
         js.velocity = [omega_l, omega_r, omega_l, omega_r]
         self.joint_pub.publish(js)
 
+
 def main(args=None):
     rclpy.init(args=args)
     node = DiffDriveSim()
@@ -149,6 +158,7 @@ def main(args=None):
     finally:
         node.destroy_node()
         rclpy.shutdown()
+
 
 if __name__ == '__main__':
     main()

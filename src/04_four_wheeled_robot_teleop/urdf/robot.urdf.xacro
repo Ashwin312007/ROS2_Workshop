@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="four_wheeled_robot">
+  <xacro:include filename="properties.xacro"/>
+  <xacro:include filename="materials.xacro"/>
+  <xacro:include filename="chassis.xacro"/>
+  <xacro:include filename="wheel.xacro"/>
+
+  <xacro:wheel name="front_left_wheel" parent="base_link" x_offset="${wheel_offset_x}" y_offset="${wheel_offset_y}" z_offset="${wheel_offset_z}"/>
+  <xacro:wheel name="front_right_wheel" parent="base_link" x_offset="${wheel_offset_x}" y_offset="-${wheel_offset_y}" z_offset="${wheel_offset_z}"/>
+  <xacro:wheel name="rear_left_wheel" parent="base_link" x_offset="-${wheel_offset_x}" y_offset="${wheel_offset_y}" z_offset="${wheel_offset_z}"/>
+  <xacro:wheel name="rear_right_wheel" parent="base_link" x_offset="-${wheel_offset_x}" y_offset="-${wheel_offset_y}" z_offset="${wheel_offset_z}"/>
+</robot>
