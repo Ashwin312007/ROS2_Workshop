@@ -2,13 +2,17 @@
 
 A progressive, multi-stage hands-on ROS 2 workshop designed for **ROS 2 Jazzy Jalisco** (Ubuntu 24.04 LTS / WSL2). This repository guides learners step-by-step from core node communication to building, parameterizing, and teleoperating a 4-wheeled mobile robot directly in **RViz2** without heavy simulator overhead.
 
+**Repository:** <https://github.com/Ashwin312007/ROS2_Workshop>
+
 ---
 
 ## 📁 Repository Structure
 
 ```text
 E:\ROS2 Workshop\
-├── README.md
+├── README.md                            # This file: full workshop walkthrough
+├── ROS2_QUICK_REFERENCE.md              # Command reference: workspace, packages, run, launch
+├── LINUX_BASICS.md                      # Essential shell commands for this workshop
 └── src/
     ├── 01_talker_listener/              # Stage 1: Basic ROS 2 Pub/Sub
     │   ├── package.xml                  # ament_python package manifest
@@ -81,6 +85,27 @@ E:\ROS2 Workshop\
 
 ---
 
+## 📥 Cloning the Repository
+
+Get your own copy of this workshop:
+
+```bash
+git clone https://github.com/Ashwin312007/ROS2_Workshop.git
+cd ROS2_Workshop
+```
+
+**Windows users cloning into WSL2** — to place the repo at `E:\ROS2 Workshop` (the path used throughout this README):
+
+```bash
+cd /mnt/e
+git clone https://github.com/Ashwin312007/ROS2_Workshop.git "ROS2 Workshop"
+cd "/mnt/e/ROS2 Workshop"
+```
+
+> Quote the path — it contains a space.
+
+---
+
 ## 🛠️ Prerequisites & Installation
 
 On **Ubuntu 24.04 LTS** (or Windows WSL2 with WSLg enabled):
@@ -125,6 +150,9 @@ source install/setup.bash
 ---
 
 ## 📖 Module Walkthrough & Execution
+
+> **New to the shell?** See **[LINUX_BASICS.md](LINUX_BASICS.md)** for the `cd`, `mkdir`, `chmod`, and `nano` commands used throughout.
+> **Want the commands only?** See **[ROS2_QUICK_REFERENCE.md](ROS2_QUICK_REFERENCE.md)** for a condensed workspace-to-URDF reference, including debugging.
 
 ### 1️⃣ Module 1: Talker / Listener (`01_talker_listener`)
 Demonstrates minimal Python publisher-subscriber architecture in ROS 2.
