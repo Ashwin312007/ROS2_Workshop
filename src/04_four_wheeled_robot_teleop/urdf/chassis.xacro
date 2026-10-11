@@ -1,14 +1,25 @@
 <?xml version="1.0"?>
+<!--
+  Stage 4: the robot body — base_footprint (ground frame) and base_link
+  (chassis box).
+
+  base_footprint is the frame diff_drive_sim.py drives with its odom -> ... TF
+  broadcast, so keep this link name stable. Dimensions come from
+  properties.xacro.
+-->
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- Dummy frame at floor level; the odom TF lands here. -->
   <link name="base_footprint"/>
-  
+
+  <!-- Fixed joint that lifts the chassis to its riding height. -->
   <joint name="base_footprint_joint" type="fixed">
     <parent link="base_footprint"/>
     <child link="base_link"/>
     <origin xyz="0 0 ${chassis_elevation}" rpy="0 0 0"/>
   </joint>
-  
+
   <link name="base_link">
+    <!-- Visual: what RViz draws (same box as the collision volume). -->
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
@@ -16,12 +27,14 @@
       </geometry>
       <material name="blue"/>
     </visual>
+    <!-- Collision: the volume a physics engine / planner would use. -->
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
         <box size="${chassis_length} ${chassis_width} ${chassis_height}"/>
       </geometry>
     </collision>
+    <!-- Inertia is generated from the same dimensions and mass. -->
     <xacro:box_inertia m="${chassis_mass}" x="${chassis_length}" y="${chassis_width}" z="${chassis_height}"/>
   </link>
 </robot>

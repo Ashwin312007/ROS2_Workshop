@@ -1,15 +1,30 @@
 <?xml version="1.0"?>
+<!--
+  Stage 4: reusable `wheel` macro.
+
+  One call produces the continuous joint and cylinder link for a single
+  wheel. The resulting joint names (${name}_joint) are exactly what
+  diff_drive_sim.py publishes in its /joint_states message, so renaming a
+  wheel here means updating that node too.
+-->
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- name: prefix for the joint/link names (e.g. front_left_wheel).
+       parent: chassis link the wheel hangs off.
+       *_offset: mounting position of the wheel centre in the parent frame. -->
   <xacro:macro name="wheel" params="name parent x_offset y_offset z_offset">
     <joint name="${name}_joint" type="continuous">
       <origin xyz="${x_offset} ${y_offset} ${z_offset}" rpy="0 0 0"/>
       <parent link="${parent}"/>
       <child link="${name}_link"/>
+      <!-- Rotate about local Y: the wheel axle points sideways. -->
       <axis xyz="0 1 0"/>
+      <!-- No position limits (continuous); only effort/velocity caps. -->
       <limit effort="10.0" velocity="20.0"/>
     </joint>
 
     <link name="${name}_link">
+      <!-- URDF cylinders are built along Z, so roll by 90 deg to align the
+           cylinder axis with the joint's Y rotation axis. -->
       <visual>
         <origin xyz="0 0 0" rpy="${pi_val/2} 0 0"/>
         <geometry>

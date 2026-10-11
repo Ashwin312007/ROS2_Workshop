@@ -1,4 +1,10 @@
 <?xml version="1.0"?>
+<!--
+  Stage 3: named RGBA colours shared by chassis.xacro and wheel.xacro.
+
+  Materials are looked up by name from the <visual> tags, so a colour only
+  needs to change in this one file. Alpha is always 1.0 (fully opaque).
+-->
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
   <material name="blue">
     <color rgba="0.1 0.3 0.8 1.0"/>

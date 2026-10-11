@@ -1,3 +1,16 @@
+"""Stage 4 launch file: simulated teleop in RViz2, no physics engine.
+
+Nodes started: robot_state_publisher (xacro-expanded model), the
+diff_drive_sim.py simulation, and RViz2. Which joint-state source runs
+depends on the arguments:
+
+  teleop:=true  (default) -> diff_drive_sim.py drives /joint_states
+  teleop:=false           -> joint_state_publisher[_gui] drives them
+
+The two `teleop` conditions are mutually exclusive on purpose: two publishers
+on /joint_states would make the wheels fight each other.
+"""
+
 import os
 
 from ament_index_python.packages import get_package_share_directory
@@ -17,6 +30,7 @@ def generate_launch_description():
     default_rviz_config_path = os.path.join(pkg_share, 'rviz', 'view_robot.rviz')
     xacro_file = os.path.join(pkg_share, 'urdf', 'robot.urdf.xacro')
 
+    # ---- Launch arguments -------------------------------------------------
     declare_teleop = DeclareLaunchArgument(
         'teleop',
         default_value='true',
@@ -35,6 +49,9 @@ def generate_launch_description():
         description='Absolute path to rviz config file'
     )
 
+    # ---- Robot description ------------------------------------------------
+    # Command() runs `xacro <file>` at launch time and captures stdout;
+    # ParameterValue(..., str) keeps it a raw string parameter.
     robot_description_content = ParameterValue(Command(['xacro ', xacro_file]), value_type=str)
 
     robot_state_publisher_node = Node(
@@ -45,14 +62,17 @@ def generate_launch_description():
         parameters=[{'robot_description': robot_description_content}]
     )
 
+    # Differential drive simulation: the source of /odom, the odom TF, and
+    # the wheel /joint_states. Started unless teleop:=false.
     diff_drive_sim_node = Node(
         package='four_wheeled_robot_teleop',
-        executable='diff_drive_sim.py',
+        executable='diff_drive_sim.py',  # installed by the CMakeLists PROGRAMS rule
         name='diff_drive_sim',
         output='screen',
         condition=IfCondition(LaunchConfiguration('teleop'))
     )
 
+    # Manual fallback 1: slider GUI, only when teleop is off and gui is on.
     joint_state_publisher_gui_node = Node(
         package='joint_state_publisher_gui',
         executable='joint_state_publisher_gui',
@@ -62,6 +82,7 @@ def generate_launch_description():
         )
     )
 
+    # Manual fallback 2: headless publisher (zeros), when teleop is off.
     joint_state_publisher_node = Node(
         package='joint_state_publisher',
         executable='joint_state_publisher',

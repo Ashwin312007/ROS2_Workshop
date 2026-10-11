@@ -1,21 +1,37 @@
 <?xml version="1.0"?>
+<!--
+  Stage 4: robot dimensions, masses, and inertia macros.
+
+  These values are the contract between the model and diff_drive_sim.py:
+  `wheel_radius` (0.08) and the track width 2 * `wheel_offset_y` (0.37) must
+  match that node's parameters, otherwise the simulated motion will not line
+  up with the drawn wheels.
+-->
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- Pi, needed for the wheel cylinder roll angle (pi/2 = 90 deg). -->
   <xacro:property name="pi_val" value="3.1415926535897931"/>
-  
+
+  <!-- Chassis box: 0.5 x 0.3 x 0.15 m, 5 kg, raised 0.10 m above the ground. -->
   <xacro:property name="chassis_length" value="0.5"/>
   <xacro:property name="chassis_width" value="0.3"/>
   <xacro:property name="chassis_height" value="0.15"/>
   <xacro:property name="chassis_mass" value="5.0"/>
   <xacro:property name="chassis_elevation" value="0.10"/>
-  
+
+  <!-- Wheels: 0.08 m radius, 0.05 m thick, 0.5 kg each. -->
   <xacro:property name="wheel_radius" value="0.08"/>
   <xacro:property name="wheel_width" value="0.05"/>
   <xacro:property name="wheel_mass" value="0.5"/>
-  
+
+  <!-- Wheel mounting offsets from base_link. Halves of the wheelbase (0.30 m)
+       and track width (0.37 m); -0.02 keeps the wheels just below the box. -->
   <xacro:property name="wheel_offset_x" value="0.15"/>
   <xacro:property name="wheel_offset_y" value="0.185"/>
   <xacro:property name="wheel_offset_z" value="-0.02"/>
-  
+
+  <!-- Inertia macro for a solid box of mass m and full side lengths x, y, z.
+       Diagonal-only tensor: Ixx=m/12*(y^2+z^2), Iyy=m/12*(x^2+z^2),
+       Izz=m/12*(x^2+y^2); the products of inertia are zero for a box. -->
   <xacro:macro name="box_inertia" params="m x y z">
     <inertial>
       <mass value="${m}"/>
@@ -25,6 +41,8 @@
     </inertial>
   </xacro:macro>
 
+  <!-- Inertia macro for a solid cylinder whose spin axis is local Y.
+       Transverse: Ixx=Izz=m/12*(3r^2+h^2); axial: Iyy=m/2*r^2. -->
   <xacro:macro name="cylinder_inertia" params="m r h">
     <inertial>
       <mass value="${m}"/>

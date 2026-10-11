@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
+  <!-- Stage 3: parameterized, macro-based xacro robot description. -->
   <name>four_wheeled_robot_xacro</name>
   <version>0.0.1</version>
   <description>Modular Xacro description of a 4-wheeled robot for ROS 2</description>
@@ -9,6 +10,7 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
+  <!-- robot_state_publisher consumes the xacro output; xacro expands it. -->
   <exec_depend>robot_state_publisher</exec_depend>
   <exec_depend>joint_state_publisher</exec_depend>
   <exec_depend>joint_state_publisher_gui</exec_depend>

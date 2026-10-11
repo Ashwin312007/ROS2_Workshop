@@ -1,10 +1,23 @@
 <?xml version="1.0"?>
+<!--
+  Stage 4 top-level robot file: include the parts, then instantiate them.
+
+  Identical in structure to Stage 3; the difference in this package is the
+  diff_drive_sim.py node, which animates these same joints and frames.
+  Run `xacro robot.urdf.xacro` to see the flattened plain URDF.
+-->
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="four_wheeled_robot">
+  <!-- Dimensions, masses, and the inertia macros (must come first). -->
   <xacro:include filename="properties.xacro"/>
+  <!-- Named colours. -->
   <xacro:include filename="materials.xacro"/>
+  <!-- base_footprint + base_link chassis. -->
   <xacro:include filename="chassis.xacro"/>
+  <!-- The reusable wheel macro. -->
   <xacro:include filename="wheel.xacro"/>
 
+  <!-- Four macro calls: front/rear come from the sign of x_offset, left/right
+       from the sign of y_offset. Y is negated for the right-hand side. -->
   <xacro:wheel name="front_left_wheel" parent="base_link" x_offset="${wheel_offset_x}" y_offset="${wheel_offset_y}" z_offset="${wheel_offset_z}"/>
   <xacro:wheel name="front_right_wheel" parent="base_link" x_offset="${wheel_offset_x}" y_offset="-${wheel_offset_y}" z_offset="${wheel_offset_z}"/>
   <xacro:wheel name="rear_left_wheel" parent="base_link" x_offset="-${wheel_offset_x}" y_offset="${wheel_offset_y}" z_offset="${wheel_offset_z}"/>

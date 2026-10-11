@@ -1,7 +1,26 @@
 <?xml version="1.0"?>
+<!--
+  Stage 2: monolithic (un-templated) URDF for a 4-wheeled mobile robot.
+
+  Layout: base_footprint (ground projection) -> base_link (chassis box) ->
+  four continuous wheel joints. Dimensions are hard-coded here on purpose;
+  Stage 3 replaces this file with parameterized xacro macros.
+
+  Frame convention: X forward, Y left, Z up. Wheel cylinders are rotated
+  +90 deg about X so their flat faces line up with the Y (rotation) axis.
+
+  File order: materials, then ALL links, then ALL joints. URDF is a graph
+  format — a joint may reference a link declared later in the file — so
+  grouping the links first and the joints afterwards keeps the whole part
+  list together and the whole assembly list together. Order is purely
+  cosmetic; the resulting tree is unchanged.
+-->
 <robot name="four_wheeled_robot">
 
-  <!-- Materials -->
+  <!-- ==================================================================
+       MATERIALS
+       Named colours referenced by name from the <visual> tags below.
+       ================================================================== -->
   <material name="blue">
     <color rgba="0.1 0.3 0.8 1.0"/>
   </material>
@@ -10,16 +29,16 @@
     <color rgba="0.05 0.05 0.05 1.0"/>
   </material>
 
-  <!-- Base Footprint (Ground projection dummy frame) -->
+  <!-- ==================================================================
+       LINKS (the parts)
+       ================================================================== -->
+
+  <!-- Base Footprint: massless frame pinned to the floor plane, used as the
+       RViz fixed frame so the wheels sit exactly on the grid. -->
   <link name="base_footprint"/>
 
-  <joint name="base_footprint_joint" type="fixed">
-    <parent link="base_footprint"/>
-    <child link="base_link"/>
-    <origin xyz="0 0 0.10" rpy="0 0 0"/>
-  </joint>
-
-  <!-- Base Link (Chassis) -->
+  <!-- Base Link (Chassis): 0.5 x 0.3 x 0.15 m box, 5 kg.
+       Inertia is the solid-box tensor Ixx=m/12*(y^2+z^2) etc. -->
   <link name="base_link">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -43,15 +62,13 @@
     </inertial>
   </link>
 
-  <!-- Front Left Wheel -->
-  <joint name="front_left_wheel_joint" type="continuous">
-    <origin xyz="0.15 0.185 -0.02" rpy="0 0 0"/>
-    <parent link="base_link"/>
-    <child link="front_left_wheel_link"/>
-    <axis xyz="0 1 0"/>
-    <limit effort="10.0" velocity="20.0"/>
-  </joint>
+  <!-- Wheel links: all four are identical 0.08 m radius, 0.05 m thick
+       cylinders of 0.5 kg. Only their parent joint's origin differs, so the
+       geometry below repeats verbatim in each one. The cylinder is rolled
+       +90 deg about X because URDF builds cylinders along Z while the axle
+       must point along Y. -->
 
+  <!-- Front Left Wheel (mounting point +0.15 m forward, +0.185 m left). -->
   <link name="front_left_wheel_link">
     <visual>
       <origin xyz="0 0 0" rpy="1.5707963267948966 0 0"/>
@@ -75,15 +92,7 @@
     </inertial>
   </link>
 
-  <!-- Front Right Wheel -->
-  <joint name="front_right_wheel_joint" type="continuous">
-    <origin xyz="0.15 -0.185 -0.02" rpy="0 0 0"/>
-    <parent link="base_link"/>
-    <child link="front_right_wheel_link"/>
-    <axis xyz="0 1 0"/>
-    <limit effort="10.0" velocity="20.0"/>
-  </joint>
-
+  <!-- Front Right Wheel (+0.15 m forward, -0.185 m right). -->
   <link name="front_right_wheel_link">
     <visual>
       <origin xyz="0 0 0" rpy="1.5707963267948966 0 0"/>
@@ -107,15 +116,7 @@
     </inertial>
   </link>
 
-  <!-- Rear Left Wheel -->
-  <joint name="rear_left_wheel_joint" type="continuous">
-    <origin xyz="-0.15 0.185 -0.02" rpy="0 0 0"/>
-    <parent link="base_link"/>
-    <child link="rear_left_wheel_link"/>
-    <axis xyz="0 1 0"/>
-    <limit effort="10.0" velocity="20.0"/>
-  </joint>
-
+  <!-- Rear Left Wheel (-0.15 m back, +0.185 m left). -->
   <link name="rear_left_wheel_link">
     <visual>
       <origin xyz="0 0 0" rpy="1.5707963267948966 0 0"/>
@@ -139,15 +140,7 @@
     </inertial>
   </link>
 
-  <!-- Rear Right Wheel -->
-  <joint name="rear_right_wheel_joint" type="continuous">
-    <origin xyz="-0.15 -0.185 -0.02" rpy="0 0 0"/>
-    <parent link="base_link"/>
-    <child link="rear_right_wheel_link"/>
-    <axis xyz="0 1 0"/>
-    <limit effort="10.0" velocity="20.0"/>
-  </joint>
-
+  <!-- Rear Right Wheel (-0.15 m back, -0.185 m right). -->
   <link name="rear_right_wheel_link">
     <visual>
       <origin xyz="0 0 0" rpy="1.5707963267948966 0 0"/>
@@ -170,5 +163,60 @@
                izz="0.000904166667"/>
     </inertial>
   </link>
+
+  <!-- ==================================================================
+       JOINTS (how the parts attach)
+       Each joint names the link it hangs from (parent) and the link it
+       places (child); the <origin> is the child's pose in the parent frame.
+       ================================================================== -->
+
+  <!-- Chassis attachment: lifts base_link to its riding height so that the
+       ground-level base_footprint frame sits at z = 0. -->
+  <joint name="base_footprint_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+    <!-- Lift the chassis by half the wheel diameter so base_footprint is at z=0. -->
+    <origin xyz="0 0 0.10" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Wheel attachments: `continuous` joints spin forever with no position
+       limits, and axis 0 1 0 makes them rotate about their local Y axle. -->
+
+  <!-- Front Left Wheel: offset +0.15 m forward, +0.185 m left of base_link. -->
+  <joint name="front_left_wheel_joint" type="continuous">
+    <origin xyz="0.15 0.185 -0.02" rpy="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="front_left_wheel_link"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="10.0" velocity="20.0"/>
+  </joint>
+
+  <!-- Front Right Wheel: same as front left but mirrored in Y. -->
+  <joint name="front_right_wheel_joint" type="continuous">
+    <origin xyz="0.15 -0.185 -0.02" rpy="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="front_right_wheel_link"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="10.0" velocity="20.0"/>
+  </joint>
+
+  <!-- Rear Left Wheel: mirrored in X, so the wheelbase is 2 * 0.15 = 0.30 m. -->
+  <joint name="rear_left_wheel_joint" type="continuous">
+    <origin xyz="-0.15 0.185 -0.02" rpy="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="rear_left_wheel_link"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="10.0" velocity="20.0"/>
+  </joint>
+
+  <!-- Rear Right Wheel: mirrored in X and Y.
+       Track width is 2 * 0.185 = 0.37 m, matching the teleop node default. -->
+  <joint name="rear_right_wheel_joint" type="continuous">
+    <origin xyz="-0.15 -0.185 -0.02" rpy="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="rear_right_wheel_link"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="10.0" velocity="20.0"/>
+  </joint>
 
 </robot>

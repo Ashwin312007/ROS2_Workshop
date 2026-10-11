@@ -1,10 +1,23 @@
 <?xml version="1.0"?>
+<!--
+  Stage 3 top-level robot file: include the parts, then instantiate them.
+
+  Run `xacro robot.urdf.xacro` to see the flattened plain URDF this produces.
+  Include order matters: properties.xacro must define the dimensions and the
+  inertia macros before chassis.xacro / wheel.xacro use them.
+-->
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="four_wheeled_robot">
+  <!-- Dimensions, masses, and inertia macros. -->
   <xacro:include filename="properties.xacro"/>
+  <!-- Named colours. -->
   <xacro:include filename="materials.xacro"/>
+  <!-- base_footprint + base_link chassis. -->
   <xacro:include filename="chassis.xacro"/>
+  <!-- The reusable wheel macro. -->
   <xacro:include filename="wheel.xacro"/>
 
+  <!-- Four macro calls: front/rear come from the sign of x_offset, left/right
+       from the sign of y_offset. Y is negated for the right-hand side. -->
   <xacro:wheel name="front_left_wheel" parent="base_link" x_offset="${wheel_offset_x}" y_offset="${wheel_offset_y}" z_offset="${wheel_offset_z}"/>
   <xacro:wheel name="front_right_wheel" parent="base_link" x_offset="${wheel_offset_x}" y_offset="-${wheel_offset_y}" z_offset="${wheel_offset_z}"/>
   <xacro:wheel name="rear_left_wheel" parent="base_link" x_offset="-${wheel_offset_x}" y_offset="${wheel_offset_y}" z_offset="${wheel_offset_z}"/>

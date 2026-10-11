@@ -1,14 +1,17 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
+  <!-- Stage 2: static, un-templated URDF robot description. -->
   <name>four_wheeled_robot_urdf</name>
   <version>0.0.1</version>
   <description>Static URDF description of a 4-wheeled robot for ROS 2</description>
   <maintainer email="user@todo.todo">User</maintainer>
   <license>Apache-2.0</license>
 
+  <!-- Build tool only; the package ships data files, not binaries. -->
   <buildtool_depend>ament_cmake</buildtool_depend>
 
+  <!-- Tools the launch file expects to be present at run time. -->
   <exec_depend>robot_state_publisher</exec_depend>
   <exec_depend>joint_state_publisher</exec_depend>
   <exec_depend>joint_state_publisher_gui</exec_depend>
